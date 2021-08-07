@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { config } from "./config";
 import { logOut } from "./user";
 import Swal from "sweetalert2";
@@ -24,7 +24,7 @@ export type Member = {
 };
 
 export type UserState = {
-  data: string[];
+  data: Array<any>;
   modal: boolean;
   detail: {
     information: Information;
@@ -34,6 +34,24 @@ export type UserState = {
   page: number;
   is_last: boolean;
 };
+
+export type Results = {
+  result: string[];
+  page: number;
+  is_last: boolean;
+};
+
+export type Data = {
+  information: Information;
+  author: Author;
+  member: Member;
+}
+
+export type ThunkAction<R, S, E, A extends Action> = (
+  dispatch: ThunkDispatch<S, E, A>,
+  getState: () => S,
+  extraArgument: E
+) => R;
 
 const initialState: UserState = {
   data: [],
@@ -63,7 +81,7 @@ const trilseSlice = createSlice({
   name: "trils",
   initialState,
   reducers: {
-    GET_POST: (state, action) => {
+    GET_POST: (state: UserState, action: PayloadAction<Results>) => {
       state.data = action.payload.result;
       state.page = action.payload.page;
       state.is_last = action.payload.is_last;
@@ -120,7 +138,7 @@ const trilseSlice = createSlice({
 
 // Trils 마이 페이지 게시물 조회 - 마이 페이지 좋아요 조회
 const getMyTrilsLikePost = () => {
-  return function (dispatch, getState, { history }) {
+  return function (dispatch: ThunkDispatc, getState:()=>S, { history }) {
     const access_token = localStorage.getItem("access_token");
     const api = `${config}/api/posts/member/like`;
 
